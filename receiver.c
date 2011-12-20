@@ -16,7 +16,7 @@
 #include "mic.h"
 #include "counter.h"
 
-#define EMA_RATE 3
+#define EMA_RATE 8
 
 volatile uint16_t avgVal=0;
 
@@ -30,10 +30,25 @@ ISR(ADC_vect) {
 
 	if (avgVal < micVal)
 	    avgVal = micVal;
+	else {
+		uint16_t diffVal = (avgVal >> EMA_RATE);
+		
+		// if avgVal >> EMA_RATE would be underflow
+		if (diffVal == 0) {
+			// asserting that never diffVal > avgVal
+		    diffVal = avgVal > EMA_RATE ? EMA_RATE : avgVal;
+		}			
+	
+		// avg_n+1 = (avg_n*(E-1))/E + mic/E
+		// avg_n+1 = avg_n - avg_n/E + mic/E
+		avgVal = avgVal - diffVal + (micVal >> EMA_RATE);
+	}		
+	
+	if (avgVal > EMA_RATE)
+	    LD_DDR = 0x00;
 	else
-		avgVal -= avgVal >> EMA_RATE;
+	    LD_DDR = 0xFF;
 }
-
 
 int main(void)
 {
@@ -49,11 +64,13 @@ int main(void)
 
 	while(1)
 	{		
-		lcdClear();
-        lcdInt(avgVal);
+       lcdClear();
+       lcdInt(avgVal);			
 		_delay_ms(50);
     }
 }
+
+
 
 
 
