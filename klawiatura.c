@@ -55,19 +55,6 @@ int main_keypad(void)
 
 int counter;
 
-ISR(TIMER0_OVF_vect) {
-	lcdClear();
-	lcdInt(counter);
-	++counter;
-}
-
-void init_counter(void) 
-{
-	const uint8_t TIMER0_RUNNING_NORMAL = 1 << CS02;
-	TCCR0 = TIMER0_RUNNING_NORMAL;	
-	TIMSK |= (1 << TOIE0);
-	sei();
-}
 
 int main(void)
 {
