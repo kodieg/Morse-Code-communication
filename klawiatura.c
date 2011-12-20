@@ -15,6 +15,7 @@
 //#include "keyboard.h"
 #include "lcd.h"
 #include "mic.h"
+//INT0_vect
 /*
 ISR(INT0_vect) {
 
@@ -51,15 +52,39 @@ int main_keypad(void)
 
 }
 */
+
+int counter;
+
+ISR(TIMER0_OVF_vect) {
+	lcdClear();
+	lcdInt(counter);
+	++counter;
+}
+
+void init_counter(void) 
+{
+	const uint8_t TIMER0_RUNNING_NORMAL = 1 << CS02;
+	TCCR0 = TIMER0_RUNNING_NORMAL;	
+	TIMSK |= (1 << TOIE0);
+	sei();
+}
+
 int main(void)
 {
+	lcdInit();
+	init_counter();
+	
     LD_DDR = 0xFF;
 
-	lcdInit();
-	micInit();
+//	micInit();
 	
     uint8_t counter = 48;
-
+	
+	while(1) {
+		//lcdInt(TCCR0);
+		//_delay_ms(100);
+	}
+/*
 	lcdString("Hello world!\0");
 	_delay_ms(20);
 
@@ -86,6 +111,6 @@ int main(void)
 			minVal = 0xFFFF;
 		}		
     }
-
+*/
 }
 
