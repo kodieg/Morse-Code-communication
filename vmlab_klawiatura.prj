@@ -10,7 +10,7 @@
 .GCCPATH   "C:\Program Files\WinAVR-20100110"
 .GCCMAKE   AUTO
 .TARGET    "vmlab_klawiatura.hex"
-.SOURCE    "mic.c" "klawiatura.c" "lcd.c"
+.SOURCE    "mic.c" "receiver.c" "lcd.c" "counter.c"
 
 .TRACE              ; Activate micro trace
 
@@ -59,3 +59,4 @@ XLCD LCD(16 2 250k) pd0 gnd pd1 pd5 pd4 pd3 pd2 gnd gnd gnd gnd
 
 
 Vmic PA7 VSS SLIDER_1(0 2.56) ;x: Panel sliders 1 - 3
+
