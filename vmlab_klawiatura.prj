@@ -1,0 +1,61 @@
+; ************************************************************
+; PROJECT:
+; AUTHOR:
+; ************************************************************
+
+; Micro + software running
+; ------------------------------------------------------------
+.MICRO "ATmega16"
+.TOOLCHAIN "GCC"
+.GCCPATH   "C:\Program Files\WinAVR-20100110"
+.GCCMAKE   AUTO
+.TARGET    "vmlab_klawiatura.hex"
+.SOURCE    "mic.c" "klawiatura.c" "lcd.c"
+
+.TRACE              ; Activate micro trace
+
+; Following lines are optional; if not included
+; exactly these values are taken by default
+; ------------------------------------------------------------
+.POWER VDD=5 VSS=0  ; Power nodes
+.CLOCK 8meg         ; Micro clock
+.STORE 250m         ; Trace (micro+signals) storage time
+.PLOT V(PD0)
+.PLOT V(PD1)
+
+; Micro nodes: RESET, AREF, PA0-PA7, PB0-PB7, PC0-PC7, PD0-PD7, ACO, TIM1OVF
+; Define here the hardware around the micro
+; ------------------------------------------------------------
+
+D1 VDD N1  ; x: Panel LEDs 1 - 8
+D2 VDD N2  ; x: Panel LEDs 1 - 8
+D3 VDD N3  ; x: Panel LEDs 1 - 8
+D4 VDD N4  ; x: Panel LEDs 1 - 8
+D5 VDD N5  ; x: Panel LEDs 1 - 8
+D6 VDD N6  ; x: Panel LEDs 1 - 8
+D7 VDD N7  ; x: Panel LEDs 1 - 8
+D8 VDD N8  ; x: Panel LEDs 1 - 8
+
+R1  N1 PB0 680
+R2  N2 PB1 680
+R3  N3 PB2 680
+R4  N4 PB3 680
+R5  N5 PB4 680
+R6  N6 PB5 680
+R7  N7 PB6 680
+R8  N8 PB7 680
+
+
+Xkeypad4x4  KEY4x4 PA0 PA1 PA2 PA3 PA4 PA5 PA6 PA7
+
+X ND2 PA0 PA1 NA1
+X ND2 PA2 PA3 NA2
+X ND2 NA1 VDD NA3
+X ND2 NA2 VDD NA4
+X ND2 NA3 NA4 NA5
+X ND2 NA5 VDD PD2
+
+XLCD LCD(16 2 250k) pd0 gnd pd1 pd5 pd4 pd3 pd2 gnd gnd gnd gnd
+
+
+Vmic PA7 VSS SLIDER_1(0 2.56) ;x: Panel sliders 1 - 3
