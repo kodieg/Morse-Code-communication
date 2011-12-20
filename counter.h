@@ -13,6 +13,6 @@
 // ISR(TIMER0_OVF_vect) {
 // }
 
-void initCounter(void);
+void counterInit(void);
 
 #endif /* COUNTER_H_ */

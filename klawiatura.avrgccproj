@@ -81,13 +81,19 @@
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="counter.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="counter.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="keyboard.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="keyboard.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="klawiatura.c">
+    <Compile Include="receiver.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="lcd.c">
