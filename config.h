@@ -14,6 +14,14 @@
 // Mic 
 #define MIC_PA_NUMBER 7 // PA7
 
+// Mode select
+#define SWITCH_DDR DDRC
+#define SWITCH_PORT PORTC
+#define SWITCH_PIN PINC
+
+#define RECEIVE_MODE 5
+#define DETECT_MAX_MODE 6
+#define RESET_MAX_MODE 7
 
 /*
 #define KEYBOARD_DDR DDRA

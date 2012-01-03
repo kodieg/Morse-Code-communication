@@ -60,3 +60,6 @@ XLCD LCD(16 2 250k) pd0 gnd pd1 pd5 pd4 pd3 pd2 gnd gnd gnd gnd
 
 Vmic PA7 VSS SLIDER_1(0 2.56) ;x: Panel sliders 1 - 3
 
+
+K6 PC6 GND
+K7 PC7 GND

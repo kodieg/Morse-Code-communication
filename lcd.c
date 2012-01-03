@@ -144,6 +144,11 @@ void lcdInt(int16_t i)
 		lcdString("-");
 		i = -i;
 	}
+	lcdUint(i);
+}
+
+void lcdUint(uint16_t i)
+{
 	int8_t log2 = 0;
 	int16_t tmp = i;
 	
@@ -161,6 +166,7 @@ void lcdInt(int16_t i)
 		log2 -= 4;
 	}	
 }
+
 
 void lcdInstr(uint8_t instr)
 {

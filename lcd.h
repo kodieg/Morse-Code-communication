@@ -42,6 +42,12 @@ void lcdString(char* str);
 // clear lcd
 void lcdClear();
 
+// display int as hex
+void lcdInt(int16_t i);
+
+// display int as hex
+void lcdUint(uint16_t i);
+
 void lcdInstr(uint8_t instr);
     
 #endif /* LCD_H_ */
