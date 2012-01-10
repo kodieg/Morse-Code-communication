@@ -99,12 +99,12 @@
     <Compile Include="morse.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="receiver.c">
-		<SubType>compile</SubType>
-	</Compile>
-	<Compile Include="sender.c">
+    <None Include="receiver.c">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
+    <None Include="sender.c">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="local_config.h">
       <SubType>compile</SubType>
     </Compile>

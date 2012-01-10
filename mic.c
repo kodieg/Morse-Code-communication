@@ -17,7 +17,8 @@ void micInit(void)
 	         1<<ADPS2 | 1<<ADPS1 | 0<<ADPS0;
 	
 	// wyzwalaj konwersje przez przepelnienie licznika 0
-	SBI(SFIOR, ADTS2); // <- to przestawic dla plytki!
+	SBI(SFIOR, ADTS0); // <- to przestawic dla plytki!
+	SBI(SFIOR, ADTS1); // <- to przestawic dla plytki!
 	// wyzwalanie zaraz po poprzedniej konwersji
 	//SFIOR &= 0x1F; 
 }

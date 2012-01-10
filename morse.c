@@ -7,11 +7,7 @@
 
 #include "morse.h"
 
-#include <avr/io.h>
-#include <avr/delay.h>
-#include <avr/interrupt.h>
-
-char morseTable[MORSE_TABLE_SIZE][8];
+char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
 
 static void setMorseTable(uint8_t index, const char *morseCode) {
 	
@@ -84,4 +80,8 @@ void morseInit() {
     setMorseTable('X', "-..-");
     setMorseTable('Y', "-.--");
     setMorseTable('Z', "--..");		
+};
+
+ const char* getMorseString(uint8_t c) {
+	return morseTable[c];
 };
