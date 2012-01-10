@@ -9,8 +9,9 @@
 
 void counterInit(void) 
 {
-	const uint8_t TIMER0_RUNNING_NORMAL = 1 << CS02;
-	TCCR0 = TIMER0_RUNNING_NORMAL;	
-	TIMSK |= (1 << TOIE0);
+	const uint8_t TIMER0_RUNNING_CTC = 1<<WGM01 | 1 << CS01;
+	TCCR0 = TIMER0_RUNNING_CTC;
+	OCR0 = 118;
+	TIMSK |= (1 << OCIE0) | (1 << TOIE0);
 	sei();
 }
