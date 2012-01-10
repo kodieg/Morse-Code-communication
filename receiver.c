@@ -17,6 +17,7 @@
 #include "counter.h"
 
 #define EMA_RATE 6
+#define EMA_THRESHOLD_OFFSET 10;
 uint16_t EmaThreshold = 0x1FF;
 
 //1 sec ~ 0x70
@@ -59,7 +60,7 @@ ISR(ADC_vect) {
 	}		
 	
 	if (CHECK(WorkMode, DETECT_MAX_MODE) && AvgVal > EmaThreshold)
-	    EmaThreshold = AvgVal;
+	    EmaThreshold = AvgVal + EMA_THRESHOLD_OFFSET;
 		
 	if (CHECK(WorkMode, RESET_MAX_MODE))
 	    EmaThreshold = 0;

@@ -93,6 +93,12 @@
     <Compile Include="keyboard.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="morse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="morse.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="receiver.c">
       <SubType>compile</SubType>
     </Compile>
