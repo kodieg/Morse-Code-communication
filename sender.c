@@ -84,16 +84,16 @@ ISR(TIMER2_COMP_vect) {
 			if (letter_pos >= len) {
 				start++;
 				letter_pos = 0;
-				silence_counter = XXX; // between letters
+				silence_counter = _charSpaceRepeat; // between letters
 			} else {
 				const char code = morseCode[letter_pos];
 				if (code == '.') {
-					sound_counter = YYY; // dit
+					sound_counter = _ditRepeat; // dit
 				}				
 				else {
-					sound_counter = ZZZ; // dah
+					sound_counter = _dahRepeat; // dah
 				}
-				silence_counter = QQQ; // between beeps
+				silence_counter = _bitSpaceRepeat; // between beeps
 				letter_pos++;
 			}
 		}
