@@ -6,6 +6,13 @@
  */ 
 
 #include "morse.h"
+#include "config.h"
+
+const uint16_t _ditRepeat = REPEAT_TIME * MORSE_DIT;
+const uint16_t _dahRepeat = REPEAT_TIME * MORSE_DAH;
+const uint16_t _bitSpaceRepeat = REPEAT_TIME * MORSE_BIT_SPACE;
+const uint16_t _charSpaceRepeat = REPEAT_TIME * MORSE_CHAR_SPACE;
+const uint16_t _wordSpaceRepeat = REPEAT_TIME * MORSE_WORD_SPACE;
 
 char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
 

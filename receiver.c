@@ -21,9 +21,6 @@
 #define EMA_THRESHOLD_OFFSET 10;
 uint16_t EmaThreshold = 0x1FF;
 
-//1 sec ~ 0x7A
-#define REPEAT_TIME (61*32)
-
 enum ReceiverState {
 	Idle,
 	Reading,
@@ -32,11 +29,6 @@ enum ReceiverState {
 
 volatile enum ReceiverState _state = Idle;
 
-const uint16_t _ditRepeat = REPEAT_TIME * MORSE_DIT;
-const uint16_t _dahRepeat = REPEAT_TIME * MORSE_DAH;
-const uint16_t _bitSpaceRepeat = REPEAT_TIME * MORSE_BIT_SPACE;
-const uint16_t _charSpaceRepeat = REPEAT_TIME * MORSE_CHAR_SPACE;
-const uint16_t _wordSpaceRepeat = REPEAT_TIME * MORSE_WORD_SPACE;
 
 volatile uint16_t _highRepeatCount = 0; 
 volatile uint16_t _lowRepeatCount = 0; 
