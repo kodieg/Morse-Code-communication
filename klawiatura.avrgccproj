@@ -105,6 +105,18 @@
 	<Compile Include="sender.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="local_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="receiver.c">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="sender.c">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="lcd.c">
       <SubType>compile</SubType>
     </Compile>

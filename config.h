@@ -19,6 +19,7 @@
 #define SWITCH_PORT PORTC
 #define SWITCH_PIN PINC
 
+#define BEEP_MODE 0
 #define RECEIVE_MODE 5
 #define DETECT_MAX_MODE 6
 #define RESET_MAX_MODE 7

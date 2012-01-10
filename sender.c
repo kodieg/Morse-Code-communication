@@ -55,10 +55,9 @@ int main_keypad(void)
 */
 
 int turn_sound_off = 0;
-	
+int sound_is_on = 0;
 
 ISR(TIMER0_COMP_vect) {
-	
 	if (turn_sound_off && !(PINB & (1 << PB3))) {
 		TCCR0 = (1 << WGM01 | 1 << COM00);
 		turn_sound_off = 0;
@@ -66,13 +65,16 @@ ISR(TIMER0_COMP_vect) {
 }
 
 void sound_on() {
+	sound_is_on = 1;
 	TCCR0 = (1 << WGM01 | 1 << COM00 | 1 << CS01);	
 }
 
 void sound_off() {
+	sound_is_on = 0;
 	turn_sound_off = 1;
 }
 
+int WorkMode = 0;
 
 int main(void)
 {
@@ -81,17 +83,54 @@ int main(void)
 	sound_off();
 	
     LD_DDR = 0xFF;
+	SWITCH_DDR = 0x00;
+	SWITCH_PORT = 0xFF;
 
 //	micInit();
 	
-    uint8_t counter = 48;
-	
+    //uint8_t counter = 48;
+/*	
+	lcdString("Pre");	
 	_delay_ms(100);
+	lcdClear();
 	sound_on();
-	_delay_ms(100);
+	lcdString("Sound");
+	_delay_ms(1000);
 	sound_off();
+	lcdString("is off");
+	_delay_ms(1000);
+	sound_on();
+	_delay_ms(2000);
+	sound_off();
+	*/
 	
-	while(1) {
+	const uint8_t MIN_TRESHOLD = 127;
+	uint8_t previous = 128;
+	uint8_t counter = 0;
+	
+	while(1)
+	{
+		WorkMode = ~SWITCH_PIN;
+		
+		if (previous != CHECK(WorkMode, BEEP_MODE)) {
+			counter = 0;
+			previous = CHECK(WorkMode, BEEP_MODE);
+		} else {
+			counter++;			
+		}			
+		
+		if (counter > MIN_TRESHOLD) {
+			counter = MIN_TRESHOLD;
+			if (previous == 1 && !sound_is_on) {
+			  sound_on();
+			  lcdInt(0);
+			} else if (previous == 0 && sound_is_on) {
+			  sound_off();
+			  lcdInt(1);
+			}			
+		}
+		
+		_delay_us(100);
 		//lcdInt(TCCR0);
 		//_delay_ms(100);
 	}
