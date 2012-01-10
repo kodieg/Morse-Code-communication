@@ -10,12 +10,14 @@
 #include <avr/io.h>
 #include <avr/delay.h>
 #include <avr/interrupt.h>
+#include <string.h>
 
 #include "commons.h"
 //#include "keyboard.h"
 #include "lcd.h"
 #include "mic.h"
 #include "counter.h"
+#include "morse.h"
 //INT0_vect
 /*
 ISR(INT0_vect) {
@@ -54,14 +56,53 @@ int main_keypad(void)
 }
 */
 
-int turn_sound_off = 0;
-int sound_is_on = 0;
+const uint16_t DITS_SCALER = 61;
+
+uint8_t turn_sound_off = 0;
+uint8_t sound_is_on = 0;
+uint16_t sound_counter = 0; 
+uint16_t silence_counter = 0;
+
+char buffer[256];
+uint8_t start = 0;
+uint8_t end = 0;
+uint8_t letter_pos = 0;
 
 ISR(TIMER0_COMP_vect) {
 	if (turn_sound_off && !(PINB & (1 << PB3))) {
 		TCCR0 = (1 << WGM01 | 1 << COM00);
 		turn_sound_off = 0;
 	}		
+}
+
+ISR(TIMER2_COMP_vect) {
+	if (sound_counter == 0 && silence_counter == 0) {
+		if (start != end) {
+			char letter = buffer[start];
+			const char* morseCode = getMorseString(letter);
+			uint8_t len = strlen(morseCode);
+			if (letter_pos >= len) {
+				start++;
+				letter_pos = 0;
+				silence_counter = XXX; // between letters
+			} else {
+				const char code = morseCode[letter_pos];
+				if (code == '.') {
+					sound_counter = YYY; // dit
+				}				
+				else {
+					sound_counter = ZZZ; // dah
+				}
+				silence_counter = QQQ; // between beeps
+				letter_pos++;
+			}
+		}
+	}
+	if (sound_counter > 0) {
+		--sound_counter;
+	} else if (silence_counter > 0) {
+		--silence_counter;
+	}
 }
 
 void sound_on() {
@@ -107,10 +148,17 @@ int main(void)
 	const uint8_t MIN_TRESHOLD = 127;
 	uint8_t previous = 128;
 	uint8_t counter = 0;
+	uint16_t timer = 0;
 	
 	while(1)
 	{
 		WorkMode = ~SWITCH_PIN;
+		/*if (timer > 100) {
+		  lcdClear();
+		  lcdInt(dits);	
+		  timer = 0;	  
+		}		
+		timer++;*/
 		
 		if (previous != CHECK(WorkMode, BEEP_MODE)) {
 			counter = 0;
