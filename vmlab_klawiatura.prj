@@ -5,12 +5,12 @@
 
 ; Micro + software running
 ; ------------------------------------------------------------
-.MICRO "ATmega16"
+.MICRO "ATmega32"
 .TOOLCHAIN "GCC"
 .GCCPATH   "C:\Program Files\WinAVR-20100110"
 .GCCMAKE   AUTO
 .TARGET    "vmlab_klawiatura.hex"
-.SOURCE    "mic.c" "main.c" "lcd.c" "counter.c"
+.SOURCE    "mic.c" "sender.c" "lcd.c" "counter.c" "morse.c"
 
 .TRACE              ; Activate micro trace
 
@@ -65,3 +65,4 @@ Vmic PA7 VSS SLIDER_1(0 2.56) ;x: Panel sliders 1 - 3
 K0 PC0 GND
 K6 PC6 GND
 K7 PC7 GND
+
