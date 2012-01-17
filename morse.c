@@ -38,7 +38,6 @@ static void setMorseTable(uint8_t index, const char *morseCode) {
 	    _maxIndex = index;
 	if (index < _minIndex)
 	    _minIndex = index;
-	}
 }
 
 void morseInit() {
