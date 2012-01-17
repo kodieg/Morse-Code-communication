@@ -16,13 +16,13 @@ void counterInit(void)
 	const uint8_t TIMER2_RUNNING_CTC = 1 << WGM21 | 1 << CS21;
     TCCR2 = TIMER2_RUNNING_CTC;
 	OCR2 = 250;
-//    TIMSK |= (1 << OCIE2);
+    TIMSK |= (1 << OCIE2);
 	
 	// Setup timer 0 in CTC mode (for C2 sound)
 	const uint8_t TIMER0_RUNNING_CTC = 1<<WGM01 | 1 << CS01;
 	TCCR0 = TIMER0_RUNNING_CTC;
 	OCR0 = 118;
-	TIMSK |= (1 << OCIE2 | 1 << OCIE0);
+	TIMSK |= (1 << OCIE0);
 #else 
 	const uint8_t TIMER0_RUNNING_CTC = 1 << WGM01 | 1 << CS01;
 	TCCR0 = TIMER0_RUNNING_CTC;
