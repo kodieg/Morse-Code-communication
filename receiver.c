@@ -22,10 +22,11 @@
 uint16_t EmaThreshold = 0x1FF;
 
 enum ReceiverState {
-	Idle,
-	Reading,
-	CoolingDown,
-	OverFlow
+	Idle = 0,
+	Reading = 1,
+	Space = 2,
+	Message = 3,
+	OverFlow = 4
 };
 
 volatile enum ReceiverState _state = Idle;
@@ -45,6 +46,27 @@ uint8_t _bufferStart = 0;
 uint8_t _bufferEnd = 0;
 uint8_t _bufferWriteBit = 0; // next bit read position is _inputBuffer[_bufferEnd][_bufferWriteBit]
 char _inputBuffer[IN_BUFFER_SIZE][MORSE_CODE_SIZE];
+
+uint8_t incrementBuffer() {
+	_bufferEnd = (_bufferEnd + 1) % IN_BUFFER_SIZE;
+	_bufferWriteBit = 0;
+				
+	if (_bufferEnd == _bufferStart) {
+		_state = OverFlow;	
+		return 0;
+	}		
+	return 1;
+}
+
+void incrementBufferAndHandleState(enum ReceiverState nextState, uint8_t c) {
+	_inputBuffer[_bufferEnd][_bufferWriteBit] = c;
+				
+	if (incrementBuffer()) {
+		_lowRepeatCount = 0;
+    	_state = nextState;
+	}					
+	
+}
 
 ISR(TIMER0_COMP_vect) {
 }
@@ -119,30 +141,24 @@ ISR(ADC_vect) {
 		else if (_state == Reading) {
 			++_lowRepeatCount;
 			
-			if (_lowRepeatCount >= _charSpaceRepeat) {
-				
-				_inputBuffer[_bufferEnd][_bufferWriteBit] = 0;
-				
-				_bufferEnd = (_bufferEnd + 1) % IN_BUFFER_SIZE;
-				_bufferWriteBit = 0;
-				
-				if (_bufferEnd == _bufferStart)
-				    _state = OverFlow;
-					
-			    _lowRepeatCount = 0;
-				_state = CoolingDown;
+			if (_lowRepeatCount >= _charSpaceRepeat) {				
+				incrementBufferAndHandleState(Space, 0);
 			}
 		}
-		else if (_state == CoolingDown) {
+		else if (_state == Space) {
+			++_lowRepeatCount;
+			
+			if (_lowRepeatCount >= _wordSpaceRepeat) {
+				incrementBufferAndHandleState(Message, Space);
+			}
+		}
+		else if (_state == Message) {
 			++_lowRepeatCount;
 			
 			if (_lowRepeatCount >= _messageSpaceRepeat) {
-				_inputBuffer[_bufferEnd][0] = 0;
-				_bufferEnd = (_bufferEnd + 1) % IN_BUFFER_SIZE;
-				_bufferWriteBit = 0;
-				_state = Idle;
+				incrementBufferAndHandleState(Idle, Message);
 			}
-		}					
+		}		
     }		
 }
 
@@ -184,10 +200,12 @@ int main(void)
 				//lcdString(_inputBuffer[_bufferStart]);
 				const char *message = _inputBuffer[_bufferStart];
 				
-				if (message[0] != 0)
-				    lcdData(getMorseChar(message));
-				else
+				if (message[0] == Space)
+				    lcdData(' ');
+				else if (message[0] == Message)
 				    lcdClear();
+				else if (message[0] != 0)
+				    lcdData(getMorseChar(message));
 				
 				_bufferStart = (_bufferStart + 1) % IN_BUFFER_SIZE;
 		    }

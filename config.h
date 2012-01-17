@@ -10,7 +10,7 @@
 #define CONFIG_H_
 
 //1 sec ~ 61*64
-#define REPEAT_TIME (61*1)
+#define REPEAT_TIME (61*2)
 
 #define F_CPU 8000000UL /* 8 MHz */
 
