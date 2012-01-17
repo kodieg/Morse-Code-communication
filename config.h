@@ -10,7 +10,7 @@
 #define CONFIG_H_
 
 //1 sec ~ 61*64
-#define REPEAT_TIME (61*32)
+#define REPEAT_TIME (61*1)
 
 #define F_CPU 8000000UL /* 8 MHz */
 
@@ -23,7 +23,7 @@
 #define SWITCH_PIN PINC
 
 #define BEEP_MODE 0
-#define RECEIVE_MODE 5
+#define SETUP_MODE 5
 #define DETECT_MAX_MODE 6
 #define RESET_MAX_MODE 7
 

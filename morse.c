@@ -14,6 +14,7 @@ const uint16_t _dahRepeat = REPEAT_TIME * MORSE_DAH;
 const uint16_t _bitSpaceRepeat = REPEAT_TIME * MORSE_BIT_SPACE;
 const uint16_t _charSpaceRepeat = REPEAT_TIME * MORSE_CHAR_SPACE;
 const uint16_t _wordSpaceRepeat = REPEAT_TIME * MORSE_WORD_SPACE;
+const uint16_t _messageSpaceRepeat = REPEAT_TIME * MORSE_MESSAGE_SPACE;
 
 uint8_t _minIndex = 255; //probably after morseInit it will be "
 uint8_t _maxIndex = 0; //probably after morseInit it will be `

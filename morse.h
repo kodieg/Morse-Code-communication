@@ -19,12 +19,14 @@
 #define MORSE_BIT_SPACE 1
 #define MORSE_CHAR_SPACE 3
 #define MORSE_WORD_SPACE 7
+#define MORSE_MESSAGE_SPACE 30
 
 extern const uint16_t _ditRepeat;
 extern const uint16_t _dahRepeat;
 extern const uint16_t _bitSpaceRepeat;
 extern const uint16_t _charSpaceRepeat;
 extern const uint16_t _wordSpaceRepeat;
+extern const uint16_t _messageSpaceRepeat;
 
 extern char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
 

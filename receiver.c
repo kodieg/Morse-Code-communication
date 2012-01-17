@@ -17,13 +17,14 @@
 #include "counter.h"
 #include "morse.h"
 
-#define EMA_RATE 6
+#define EMA_RATE 4
 #define EMA_THRESHOLD_OFFSET 10;
 uint16_t EmaThreshold = 0x1FF;
 
 enum ReceiverState {
 	Idle,
 	Reading,
+	CoolingDown,
 	OverFlow
 };
 
@@ -84,7 +85,7 @@ ISR(ADC_vect) {
 	else
 	    LD_DDR = 0xFF;
 		
-    if (CHECK(WorkMode, RECEIVE_MODE)) {
+    if (!CHECK(WorkMode, SETUP_MODE)) {
 		
 		if (_state == OverFlow)
 		    return;
@@ -129,9 +130,19 @@ ISR(ADC_vect) {
 				    _state = OverFlow;
 					
 			    _lowRepeatCount = 0;
+				_state = CoolingDown;
+			}
+		}
+		else if (_state == CoolingDown) {
+			++_lowRepeatCount;
+			
+			if (_lowRepeatCount >= _messageSpaceRepeat) {
+				_inputBuffer[_bufferEnd][0] = 0;
+				_bufferEnd = (_bufferEnd + 1) % IN_BUFFER_SIZE;
+				_bufferWriteBit = 0;
 				_state = Idle;
 			}
-		}				
+		}					
     }		
 }
 
@@ -152,7 +163,7 @@ int main(void)
 	{
 		WorkMode = ~SWITCH_PIN;
 		
-		if (!CHECK(WorkMode, RECEIVE_MODE))
+		if (CHECK(WorkMode, SETUP_MODE))
 		{
             lcdClear();
   
@@ -171,7 +182,12 @@ int main(void)
 				//lcdData('#');
 				
 				//lcdString(_inputBuffer[_bufferStart]);
-				lcdData(getMorseChar(_inputBuffer[_bufferStart]));
+				const char *message = _inputBuffer[_bufferStart];
+				
+				if (message[0] != 0)
+				    lcdData(getMorseChar(message));
+				else
+				    lcdClear();
 				
 				_bufferStart = (_bufferStart + 1) % IN_BUFFER_SIZE;
 		    }
