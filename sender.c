@@ -58,107 +58,139 @@ int main_keypad(void)
 
 const uint16_t DITS_SCALER = 61;
 
-uint8_t turn_sound_off = 0;
-uint8_t sound_is_on = 0;
-uint16_t sound_counter = 0; 
-uint16_t silence_counter = 0;
+volatile uint8_t turn_sound_off = 0;
+volatile uint8_t sound_is_on = 0;
+volatile uint16_t sound_counter = 0;
+volatile uint16_t silence_counter = 0;
 
-char buffer[256];
-uint8_t start = 0;
-uint8_t end = 0;
-uint8_t letter_pos = 0;
+volatile char buffer[256];
+volatile uint8_t start = 0;
+volatile uint8_t end = 0;
+volatile uint8_t letter_pos = 0;
 
 ISR(TIMER0_COMP_vect) {
-	if (turn_sound_off && !(PINB & (1 << PB3))) {
-		TCCR0 = (1 << WGM01 | 1 << COM00);
+	if (turn_sound_off && !(PINB & (1 << PB3))) {		
+		TCCR0 = (1 << WGM01 | 1 << CS01);
 		turn_sound_off = 0;
 	}		
 }
 
+ISR(TIMER0_OVF_vect) {}
+	
+ISR(TIMER2_OVF_vect) {}
+
 ISR(TIMER2_COMP_vect) {
 	if (sound_counter == 0 && silence_counter == 0) {
+		//sound_off();
 		if (start != end) {
 			char letter = buffer[start];
 			const char* morseCode = getMorseString(letter);
-			uint8_t len = strlen(morseCode);
-			if (letter_pos >= len) {
-				start++;
-				letter_pos = 0;
-				silence_counter = _charSpaceRepeat; // between letters
-			} else {
-				const char code = morseCode[letter_pos];
-				if (code == '.') {
-					sound_counter = _ditRepeat; // dit
-				}				
-				else {
-					sound_counter = _dahRepeat; // dah
+			if (morseCode) {
+				uint8_t len = strlen(morseCode);
+				if (letter_pos >= len) {
+					start++;
+					letter_pos = 0;
+					silence_counter = _charSpaceRepeat; // between letters
+				} else {
+					const char code = morseCode[letter_pos];
+					if (code == '.') {
+						sound_counter = _ditRepeat; // dit
+					}				
+					else {
+						sound_counter = _dahRepeat; // dah
+					}
+					silence_counter = _bitSpaceRepeat; // between beeps
+					letter_pos++;
 				}
-				silence_counter = _bitSpaceRepeat; // between beeps
-				letter_pos++;
-			}
+			} else {
+				start++;
+				silence_counter =_charSpaceRepeat;
+			}			
 		}
 	}
 	if (sound_counter > 0) {
+		sound_on();
 		--sound_counter;
 	} else if (silence_counter > 0) {
+		 sound_off();
 		--silence_counter;
 	}
 }
 
 void sound_on() {
-	sound_is_on = 1;
-	TCCR0 = (1 << WGM01 | 1 << COM00 | 1 << CS01);	
+	if (sound_is_on == 0) {
+		sound_is_on = 1;
+		TCCR0 = (1 << WGM01 | 1 << COM00 | 1 << CS01);	
+		SBI(LD_DDR, 0);
+	}		
 }
 
 void sound_off() {
-	sound_is_on = 0;
-	turn_sound_off = 1;
+	if (sound_is_on) {
+		sound_is_on = 0;
+		turn_sound_off = 1;
+		CBI(LD_DDR, 0);
+		//TCCR0 = (1 << WGM01 | 1 << CS01);
+	}	
 }
+
+ISR(USART_RXC_vect) {
+	uint8_t b = UDR;
+	buffer[end] = b;
+	++end;
+	// lcdInt(b);
+}
+
+ISR(USART_TXC_vect) {}
+ISR(USART_UDRE_vect) {}
 
 int WorkMode = 0;
 
 int main(void)
 {
-	lcdInit();
-	counterInit();
-	sound_off();
-	
     LD_DDR = 0xFF;
 	SWITCH_DDR = 0x00;
 	SWITCH_PORT = 0xFF;
+		
+	UCSRA = 0x40;
+	UCSRB = 0x98;
+	UCSRC = 0x86;
+	UBRRH = 0x00;
+	UBRRL = 0x33;
 
-//	micInit();
-	
-    //uint8_t counter = 48;
-/*	
-	lcdString("Pre");	
-	_delay_ms(100);
-	lcdClear();
-	sound_on();
-	lcdString("Sound");
-	_delay_ms(1000);
-	sound_off();
-	lcdString("is off");
-	_delay_ms(1000);
-	sound_on();
-	_delay_ms(2000);
-	sound_off();
-	*/
-	
+	morseInit();
+	lcdInit();
+	counterInit();
+			
 	const uint8_t MIN_TRESHOLD = 127;
 	uint8_t previous = 128;
 	uint8_t counter = 0;
-	uint16_t timer = 0;
+	volatile uint16_t timer = 1001;
+
+	
+	strcpy(buffer, "KODIE SOS");
+	end = strlen(buffer);
 	
 	while(1)
+	{}
 	{
+			
+			
 		WorkMode = ~SWITCH_PIN;
-		/*if (timer > 100) {
+		if (timer > 100) {
+		  // cli();
 		  lcdClear();
-		  lcdInt(dits);	
-		  timer = 0;	  
+		  lcdString(buffer);
+		  lcdString(" ");
+		  lcdInt(start);
+		  lcdString(" ");
+		  lcdInt(sound_counter);
+		  lcdString(" ");
+		  lcdInt(silence_counter);
+		  // sei();
+		  timer = 0;	
 		}		
-		timer++;*/
+		timer++;
 		
 		if (previous != CHECK(WorkMode, BEEP_MODE)) {
 			counter = 0;
@@ -171,10 +203,10 @@ int main(void)
 			counter = MIN_TRESHOLD;
 			if (previous == 1 && !sound_is_on) {
 			  sound_on();
-			  lcdInt(0);
+			  //lcdInt(0);
 			} else if (previous == 0 && sound_is_on) {
 			  sound_off();
-			  lcdInt(1);
+			  //lcdInt(1);
 			}			
 		}
 		
@@ -197,7 +229,7 @@ int main(void)
 		if (micVal < minVal)
 			minVal = micVal;
 					
-		if (i % 2048 == 0) 
+		if (i % 2048 == 0)
 		{
 			lcdClear();
 			//lcdInt(micRead());
@@ -211,4 +243,6 @@ int main(void)
     }
 */
 }
+
+
 

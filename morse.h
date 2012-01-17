@@ -28,7 +28,7 @@ extern const uint16_t _charSpaceRepeat;
 extern const uint16_t _wordSpaceRepeat;
 extern const uint16_t _messageSpaceRepeat;
 
-extern char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
+// extern char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
 
 void morseInit();
 

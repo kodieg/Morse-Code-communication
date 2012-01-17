@@ -3,7 +3,7 @@
  *
  * Created: 2012-01-10 17:03:13
  *  Author: pn264889
- */ 
+ */
 
 #include <stdlib.h>
 #include "morse.h"
@@ -38,6 +38,7 @@ static void setMorseTable(uint8_t index, const char *morseCode) {
 	    _maxIndex = index;
 	if (index < _minIndex)
 	    _minIndex = index;
+	}
 }
 
 void morseInit() {
