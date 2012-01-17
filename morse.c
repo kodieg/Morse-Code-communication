@@ -5,6 +5,7 @@
  *  Author: pn264889
  */ 
 
+#include <stdlib.h>
 #include "morse.h"
 #include "config.h"
 
@@ -13,6 +14,9 @@ const uint16_t _dahRepeat = REPEAT_TIME * MORSE_DAH;
 const uint16_t _bitSpaceRepeat = REPEAT_TIME * MORSE_BIT_SPACE;
 const uint16_t _charSpaceRepeat = REPEAT_TIME * MORSE_CHAR_SPACE;
 const uint16_t _wordSpaceRepeat = REPEAT_TIME * MORSE_WORD_SPACE;
+
+uint8_t _minIndex = 255; //probably after morseInit it will be "
+uint8_t _maxIndex = 0; //probably after morseInit it will be `
 
 char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
 
@@ -29,12 +33,16 @@ static void setMorseTable(uint8_t index, const char *morseCode) {
 	    else
 	        morseTable[index][i] = morseCode[i];
 	}   
+	if (index > _maxIndex)
+	    _maxIndex = index;
+	if (index < _minIndex)
+	    _minIndex = index;
 }
 
 void morseInit() {
 		
 	for (uint8_t i = 0; i < MORSE_TABLE_SIZE; i++)
-	    setMorseTable(i, "");
+	    setMorseTable(i, 0);
 		
     setMorseTable('A', ".-");
     setMorseTable('U', "..-");
@@ -92,3 +100,13 @@ void morseInit() {
  const char* getMorseString(uint8_t c) {
 	return morseTable[c];
 };
+
+uint8_t getMorseChar(const char *morseString) {
+	for (uint8_t i = _minIndex; i <= _maxIndex; i++) {
+		
+		const char *str = getMorseString(i);
+		if (str && (strcmp(str, morseString) == 0))
+		    return i;
+	}  	
+	return '~';
+}

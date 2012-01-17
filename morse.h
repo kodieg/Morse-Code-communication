@@ -26,11 +26,11 @@ extern const uint16_t _bitSpaceRepeat;
 extern const uint16_t _charSpaceRepeat;
 extern const uint16_t _wordSpaceRepeat;
 
-
 extern char morseTable[MORSE_TABLE_SIZE][MORSE_CODE_SIZE];
 
 void morseInit();
 
 const char* getMorseString(uint8_t c);
+uint8_t getMorseChar(const char *morseString);
 
 #endif /* MORSE_H_ */

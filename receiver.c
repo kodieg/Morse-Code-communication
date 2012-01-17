@@ -137,6 +137,7 @@ ISR(ADC_vect) {
 
 int main(void)
 {
+	morseInit();
 	lcdInit();
 	micInit();
 	counterInit();
@@ -159,6 +160,7 @@ int main(void)
 		        lcdInt(_avgVal);
 	        else
                 lcdInt(EmaThreshold);
+		    lcdData('X');
 		}
 		else {
 			if (_state == OverFlow) {
@@ -166,9 +168,11 @@ int main(void)
 			}				
 			// if there is something to read, receive it
 		    else if (_bufferStart != _bufferEnd)	{
-				lcdData('#');
+				//lcdData('#');
 				
-				lcdString(_inputBuffer[_bufferStart]);
+				//lcdString(_inputBuffer[_bufferStart]);
+				lcdData(getMorseChar(_inputBuffer[_bufferStart]));
+				
 				_bufferStart = (_bufferStart + 1) % IN_BUFFER_SIZE;
 		    }
 		}			
